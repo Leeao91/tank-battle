@@ -41,7 +41,7 @@
 <body>
   <h1>TANK BATTLE · 坦克大战</h1>
   <div id="wrap">
-    <canvas id="game"></canvas>
+    <canvas id="game" tabindex="0"></canvas>
     <div id="touch">
       <button class="btn" id="up">▲</button>
       <button class="btn" id="down">▼</button>
@@ -575,13 +575,13 @@
       ctx.fillText('保护基地 · 消灭所有敌军', W/2, HUD_H+FIELD*0.46);
       ctx.fillStyle='#8fd0ff'; ctx.font='16px "Microsoft YaHei",sans-serif';
       const b = (frame>>4)%2===0;
-      if(b) ctx.fillText('按 空格键 开始游戏', W/2, HUD_H+FIELD*0.62);
+      if(b) ctx.fillText('按 空格键 或 点击画面 开始', W/2, HUD_H+FIELD*0.62);
     } else if(state==='over'){
       ctx.fillStyle='#e8443a'; ctx.font='bold 40px "Microsoft YaHei",sans-serif';
       ctx.fillText('GAME OVER', W/2, HUD_H+FIELD*0.40);
       ctx.fillStyle='#e6e6e6'; ctx.font='18px "Microsoft YaHei",sans-serif';
       ctx.fillText('本局得分 '+score+'   ·   最高 '+hiScore, W/2, HUD_H+FIELD*0.52);
-      if((frame>>4)%2===0){ ctx.fillStyle='#8fd0ff'; ctx.font='16px "Microsoft YaHei",sans-serif'; ctx.fillText('按 空格键 重新开始', W/2, HUD_H+FIELD*0.64); }
+      if((frame>>4)%2===0){ ctx.fillStyle='#8fd0ff'; ctx.font='16px "Microsoft YaHei",sans-serif'; ctx.fillText('按 空格键 或 点击画面 重新开始', W/2, HUD_H+FIELD*0.64); }
     } else if(state==='clear'){
       ctx.fillStyle='#6fdc6f'; ctx.font='bold 36px "Microsoft YaHei",sans-serif';
       ctx.fillText('STAGE CLEAR', W/2, HUD_H+FIELD*0.48);
@@ -634,6 +634,11 @@
   });
   window.addEventListener('keyup', e=> setKey(e.code,false));
   window.addEventListener('blur', ()=> keys={});
+  // 聚焦 + 点击开始（解决部分浏览器页面未聚焦导致按键无响应）
+  canvas.addEventListener('pointerdown', ()=>{ canvas.focus(); if(state==='title'||state==='over') startGame(); });
+  window.addEventListener('pointerdown', ()=> canvas.focus());
+  window.addEventListener('focus', ()=> canvas.focus());
+  canvas.focus();
 
   // 触屏
   if('ontouchstart' in window || navigator.maxTouchPoints>0) document.body.classList.add('touch');
